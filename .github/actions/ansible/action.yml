@@ -1,5 +1,5 @@
 name: 'Ansible'
-description: 'Run Ansible playbook' 
+description: 'Ansible'
 runs:
   using: 'docker'
   image: 'Dockerfile'
