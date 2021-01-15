@@ -20,6 +20,6 @@ RUN set -eux \
 	&& find /usr/lib/ -name '__pycache__' -print0 | xargs -0 -n1 rm -rf \
 	&& find /usr/lib/ -name '*.pyc' -print0 | xargs -0 -n1 rm -rf
 COPY --from=builder /usr/lib/python3.8/site-packages/ /usr/lib/python3.8/site-packages/
-COPY --from=builder /usr/bin/ansible-lint /usr/bin/ansible-lint
+COPY --from=builder /usr/bin/ansible-* /usr/bin/
 WORKDIR /data
 ENTRYPOINT ["ansible-playbook"]
