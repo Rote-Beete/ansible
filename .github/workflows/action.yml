@@ -13,6 +13,8 @@ jobs:
 
       - name: execute ansible-lint
         uses: ./.github/actions/ansible
+        with:
+          entrypoint: ansible-lint
 
   deploy:
     runs-on: ubuntu-20.04
