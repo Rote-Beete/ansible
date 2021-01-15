@@ -6,7 +6,8 @@ RUN set -eux \
 		gcc \
 		libffi-dev \
 		musl-dev \
-		openssl-dev
+		openssl-dev \
+		python3-dev
 
 RUN set -eux \
 	&& pip3 install --no-cache-dir --no-compile ansible-lint \
