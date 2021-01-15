@@ -2,6 +2,7 @@ FROM alpine:3.11 as builder
 
 RUN set -eux \
 	&& apk add --no-cache \
+		gcc \
 		libffi-dev \
 		musl-dev \
 		openssl-dev \
