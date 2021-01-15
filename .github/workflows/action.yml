@@ -8,13 +8,26 @@ jobs:
   test:
     runs-on: ubuntu-20.04
     steps:
-    - uses: actions/checkout@v2
-    - uses: ./.github/actions/ansible-lint
+      - name: checkout codebase
+        uses: actions/checkout@v2
+
+      - name: execute ansible-lint
+        uses: ./.github/actions/ansible-lint
+
   deploy:
     runs-on: ubuntu-20.04
     needs: test
     steps:
-    - uses: actions/checkout@v2
-    - uses: ./.github/actions/ansible
-      env:
-        VAULT_PASS: ${{ secrets.VAULT_PASS }}
+      - name: checkout codebase
+        uses: actions/checkout@v2
+
+      - name: inject vault passphrase
+        run: echo "${{ secrets.VAULT_PASS }}" > ./.vault_pass
+
+      - name: execute ansible
+        uses: ./.github/actions/ansible
+        with:
+          args: playbook.yml
+
+      - name: shred vault passphrase
+        run: shred ./.vault_pass
