@@ -29,6 +29,7 @@ jobs:
       - name: execute ansible
         uses: ./.github/actions/ansible
         with:
+          entrypoint: ansible-playbook
           args: playbook.yml
 
       - name: shred vault passphrase
