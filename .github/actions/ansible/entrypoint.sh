@@ -1,4 +1,3 @@
-
 #!/bin/sh
 
 echo "$VAULT_PASS" > ./.vault_pass
