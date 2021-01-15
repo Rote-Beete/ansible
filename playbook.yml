@@ -21,6 +21,7 @@
       copy:
         dest: "~/.ssh/id_ed25519_cicd_rotebeete_org.pub"
         content: "{{ ansible_ssh_key_pub }}"
+        mode: 0600
 
 - name: Deploy
   hosts: webservers
