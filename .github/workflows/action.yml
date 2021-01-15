@@ -1,4 +1,4 @@
-name: Master build and deploy
+name: test and deploy ansible playbook
 on:
   push:
     branches:
