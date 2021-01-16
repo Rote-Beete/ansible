@@ -8,7 +8,7 @@
       file:
         path: ~/.ssh
         state: directory
-        mode: 0755
+        mode: 0700
 
     - name: import public SSH hostkeys
       known_hosts:
