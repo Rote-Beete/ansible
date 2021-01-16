@@ -1,3 +1,3 @@
 #!/bin/sh
 
-echo ${VAULT_PASS}
+echo "${VAULT_PASS}"
