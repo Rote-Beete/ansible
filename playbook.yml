@@ -4,6 +4,12 @@
   hosts: localhost
   connection: local
   tasks:
+    - name: ensure ssh directory exists
+      file:
+        path: ~/.ssh
+        state: directory
+        mode: 0755
+
     - name: import public SSH hostkeys
       known_hosts:
         path: ~/.ssh/known_hosts
