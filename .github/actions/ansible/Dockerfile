@@ -6,6 +6,7 @@ RUN set -eux \
 		gcc \
 		libffi-dev \
 		musl-dev \
+		openssh-keygen \
 		openssl-dev \
 		python3-dev
 
