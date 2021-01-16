@@ -10,7 +10,7 @@ RUN set -eux \
 		python3-dev
 
 RUN set -eux \
-    && pip3 install --no-cache-dir --no-compile ansible ansible-lint\
+    && pip3 install --no-cache-dir --no-compile ansible ansible-lint pycrypto\
 	&& find /usr/lib/ -name '__pycache__' -print0 | xargs -0 -n1 rm -rf \
 	&& find /usr/lib/ -name '*.pyc' -print0 | xargs -0 -n1 rm -rf
 
