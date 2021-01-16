@@ -6,7 +6,6 @@ RUN set -eux \
 		gcc \
 		libffi-dev \
 		musl-dev \
-		openssh-keygen \
 		openssl-dev \
 		python3-dev
 
@@ -17,7 +16,11 @@ RUN set -eux \
 
 FROM alpine:3.11 as production
 RUN set -eux \
-	&& apk add --no-cache bash git python3 \
+	&& apk add --no-cache \
+		bash \
+		git \
+		openssh-keygen \
+		python3 \
 	&& find /usr/lib/ -name '__pycache__' -print0 | xargs -0 -n1 rm -rf \
 	&& find /usr/lib/ -name '*.pyc' -print0 | xargs -0 -n1 rm -rf
 COPY --from=builder /usr/lib/python3.8/site-packages/ /usr/lib/python3.8/site-packages/
