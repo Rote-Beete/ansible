@@ -18,13 +18,13 @@
       with_items:  "{{ groups['all'] }}"
 
     - name: import private SSH key
-      copy:
+      ansible.builtin.copy:
         dest: "~/.ssh/id_ed25519_cicd_rotebeete_org"
         content: "{{ ansible_ssh_key }}"
         mode: 0600
 
     - name: import pubic SSH key
-      copy:
+      ansible.builtin.copy:
         dest: "~/.ssh/id_ed25519_cicd_rotebeete_org.pub"
         content: "{{ ansible_ssh_key_pub }}"
         mode: 0600
