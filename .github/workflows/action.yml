@@ -23,19 +23,10 @@ jobs:
       - name: checkout codebase
         uses: actions/checkout@v2
 
-      - name: inject vault passphrase
-        shell: bash
-        run: echo "${VAULT_PASS}" > ./.vault_pass
-        env:
-          VAULT_PASS: ${{ secrets.VAULT_PASS }}
-
-
       - name: execute ansible
         uses: ./.github/actions/ansible
         with:
           entrypoint: ansible-playbook
           args: playbook.yml
-
-      - name: shred vault passphrase
-        shell: bash
-        run: shred ./.vault_pass
+        env:
+          VAULT_PASS: ${{ secrets.VAULT_PASS }}
