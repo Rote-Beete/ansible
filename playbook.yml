@@ -9,7 +9,7 @@
         - shell: "ls -la ~" 
         - shell: "ls -la $HOME" 
         - shell: "ls -la /etc/sshd/"
-         
+
         - name: ensure ssh directory exists
           file:
             path: "~/.ssh"
@@ -42,7 +42,7 @@
 - name: Deploy
   hosts: webservers
   vars:
-    ansible_ssh_private_key_file: "./.ssh/id_ed25519_cicd_rotebeete_org"
+    ansible_ssh_private_key_file: "~/.ssh/id_ed25519_cicd_rotebeete_org"
   tasks:
     - block:
         - name: become | check the default priviledge escalation
