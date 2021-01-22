@@ -1,0 +1,33 @@
+name: test ansible playbook
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  test:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: checkout codebase
+        uses: actions/checkout@v2
+
+      - name: execute ansible-lint
+        uses: docker://rotebeete/ansible:latest
+        with:
+          entrypoint: ansible-lint
+          args: .
+
+  deploy:
+    runs-on: ubuntu-20.04
+    needs: test
+    steps:
+      - name: checkout codebase
+        uses: actions/checkout@v2
+
+      - name: execute ansible
+        uses: docker://rotebeete/ansible:latest
+        with:
+          entrypoint: ansible-playbook
+          args: playbook.yml --check -vvv
+        env:
+          VAULT_PASS: ${{ secrets.VAULT_PASS }}
