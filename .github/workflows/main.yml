@@ -30,6 +30,6 @@ jobs:
         uses: docker://rotebeete/ansible:latest
         with:
           entrypoint: ansible-playbook
-          args: playbook.yml
+          args: playbook.yml -vvv
         env:
           VAULT_PASS: ${{ secrets.VAULT_PASS }}
