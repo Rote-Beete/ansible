@@ -1,8 +1,10 @@
 name: test and deploy ansible playbook
 on:
   push:
-    branches:
-      - main
+    branches: main
+    paths-ignore:
+      - '**/README.md'
+      - '**/LICENSE.md'
 
 jobs:
   test:

@@ -1,8 +1,11 @@
 name: test ansible playbook
 on:
   push:
-    branches:
-      - main
+  pull_request:
+    branches: main
+    paths-ignore:
+      - '**/README.md'
+      - '**/LICENSE.md'
 
 jobs:
   test:
