@@ -1,0 +1,35 @@
+name: test ansible playbook
+on:
+  pull_request:
+    branches: main
+    paths-ignore:
+      - '**/README.md'
+      - '**/LICENSE.md'
+
+jobs:
+  test:
+    runs-on: ubuntu-20.04
+    steps:
+      - name: checkout codebase
+        uses: actions/checkout@v2
+
+      - name: execute ansible-lint
+        uses: docker://rotebeete/ansible:latest
+        with:
+          entrypoint: ansible-lint
+          args: .
+
+  deploy:
+    runs-on: ubuntu-20.04
+    needs: test
+    steps:
+      - name: checkout codebase
+        uses: actions/checkout@v2
+
+      - name: execute ansible
+        uses: docker://rotebeete/ansible:latest
+        with:
+          entrypoint: ansible-playbook
+          args: playbook.yml --check
+        env:
+          VAULT_PASS: ${{ secrets.VAULT_PASS }}
