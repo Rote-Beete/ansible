@@ -48,4 +48,3 @@
         - name: become | check the default priviledge escalation
           shell: "[ $(id -u) -eq 0 ]"
           changed_when: false
-
