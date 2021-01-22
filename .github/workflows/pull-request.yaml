@@ -1,4 +1,4 @@
-name: test ansible playbook
+name: Test Ansible playbook
 on:
   pull_request:
     branches: main

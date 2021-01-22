@@ -1,4 +1,4 @@
-name: test and deploy ansible playbook
+name: Test and Deploy Ansible playbook
 on:
   push:
     branches: main
