@@ -7,26 +7,26 @@ on:
       - '**/LICENSE.md'
 
 jobs:
-  test:
+  Lint:
     runs-on: ubuntu-20.04
     steps:
       - name: checkout codebase
         uses: actions/checkout@v2
 
-      - name: execute ansible-lint
+      - name: Execute Ansible-Lint
         uses: docker://rotebeete/ansible:latest
         with:
           entrypoint: ansible-lint
           args: .
 
-  deploy:
+  Test:
     runs-on: ubuntu-20.04
-    needs: test
+    needs: Lint
     steps:
-      - name: checkout codebase
+      - name: Checkout codebase
         uses: actions/checkout@v2
 
-      - name: execute ansible
+      - name: Execute Ansible Check
         uses: docker://rotebeete/ansible:latest
         with:
           entrypoint: ansible-playbook
