@@ -4,35 +4,45 @@
   hosts: localhost
   connection: local
   tasks:
-    - name: ensure ssh directory exists
-      file:
-        path: ~/.ssh
-        state: directory
-        mode: 0700
+    - name: Prepare Ansible environment for remote connection
+      check_mode: false
+      block:
+        - # Github actions environment is borked regarding the home directory of the running user,
+          # which is /github/home for root instead of /root
+          name: Get users home directory path
+          shell: "getent passwd $(id -u) | awk -F: '{ print $6 }'"
+          register: user_home
+          changed_when: false
 
-    - name: import public SSH hostkeys
-      known_hosts:
-        path: ~/.ssh/known_hosts
-        name: "{{ hostvars[item]['inventory_hostname'] }}"
-        key: "{{ hostvars[item]['ansible_ssh_hostkey_pub'] }}"
-      with_items:  "{{ groups['all'] }}"
+        - name: Ensure SSH directory exists
+          file:
+            path: "{{ user_home.stdout }}/.ssh"
+            state: directory
+            mode: 0700
 
-    - name: import private SSH key
-      ansible.builtin.copy:
-        dest: "~/.ssh/id_ed25519_cicd_rotebeete_org"
-        content: "{{ ansible_ssh_key }}"
-        mode: 0600
+        - name: Import public SSH hostkeys
+          known_hosts:
+            path: "{{ user_home.stdout }}/.ssh/known_hosts"
+            name: "{{ hostvars[item]['inventory_hostname'] }}"
+            key: "{{ hostvars[item]['ansible_ssh_hostkey_pub'] }}"
+          with_items:  "{{ groups['all'] }}"
 
-    - name: import public SSH key
-      ansible.builtin.copy:
-        dest: "~/.ssh/id_ed25519_cicd_rotebeete_org.pub"
-        content: "{{ ansible_ssh_key_pub }}"
-        mode: 0600
+        - name: Import private SSH key
+          copy:
+            dest: "{{ user_home.stdout }}/.ssh/id_ed25519_cicd_rotebeete_org"
+            content: "{{ ansible_ssh_key }}"
+            mode: 0600
+
+        - name: Import public SSH key
+          copy:
+            dest: "{{ user_home.stdout }}/.ssh/id_ed25519_cicd_rotebeete_org.pub"
+            content: "{{ ansible_ssh_key_pub }}"
+            mode: 0600
 
 - name: Deploy
   hosts: webservers
   vars:
-    ansible_ssh_private_key_file: "~/.ssh/id_ed25519_cicd_rotebeete_org"
+    ansible_ssh_private_key_file: "{{ hostvars['localhost']['user_home']['stdout'] }}/.ssh/id_ed25519_cicd_rotebeete_org"
   tasks:
     - block:
         - name: become | check the default priviledge escalation
