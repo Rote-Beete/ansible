@@ -32,7 +32,7 @@ services:
       - --entrypoints.http.address=:80
       - --entrypoints.https.address=:443
       - --certificatesresolvers.le.acme.email=admin@rotebeete.org
-      - --certificatesresolvers.le.acme.storage=/acme.json
+      - --certificatesresolvers.le.acme.storage=/etc/traefik/acme/acme.json
       - --certificatesresolvers.le.acme.tlschallenge=true
     ports:
       - 80:80
