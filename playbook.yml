@@ -4,37 +4,39 @@
   hosts: localhost
   connection: local
   tasks:
+
     - name: Prepare Ansible environment for remote connection
       check_mode: false
       block:
+
         - # Github actions environment is borked regarding the home directory of the running user,
           # which is /github/home for root instead of /root
           name: Get users home directory path
-          shell: "getent passwd $(id -u) | awk -F: '{ print $6 }'"
+          ansible.builtin.shell: "getent passwd $(id -u) | awk -F: '{ print $6 }'"
           register: user_home
           changed_when: false
 
         - name: Ensure SSH directory exists
-          file:
+          ansible.builtin.file:
             path: "{{ user_home.stdout }}/.ssh"
             state: directory
             mode: 0700
 
         - name: Import public SSH hostkeys
-          known_hosts:
+          ansible.builtin.known_hosts:
             path: "{{ user_home.stdout }}/.ssh/known_hosts"
             name: "{{ hostvars[item]['inventory_hostname'] }}"
             key: "{{ hostvars[item]['ansible_ssh_hostkey_pub'] }}"
           with_items:  "{{ groups['all'] }}"
 
         - name: Import private SSH key
-          copy:
+          ansible.builtin.copy:
             dest: "{{ user_home.stdout }}/.ssh/id_ed25519_cicd_rotebeete_org"
             content: "{{ ansible_ssh_key }}"
             mode: 0600
 
         - name: Import public SSH key
-          copy:
+          ansible.builtin.copy:
             dest: "{{ user_home.stdout }}/.ssh/id_ed25519_cicd_rotebeete_org.pub"
             content: "{{ ansible_ssh_key_pub }}"
             mode: 0600
@@ -44,7 +46,43 @@
   vars:
     ansible_ssh_private_key_file: "{{ hostvars['localhost']['user_home']['stdout'] }}/.ssh/id_ed25519_cicd_rotebeete_org"
   tasks:
-    - block:
-        - name: become | check the default priviledge escalation
-          shell: "[ $(id -u) -eq 0 ]"
-          changed_when: false
+
+    - when: ansible_distribution in ['Debian', 'Ubuntu']
+      check_mode: false
+      block:
+
+        - name: Install packages
+          ansible.builtin.package:
+            name:
+              - git
+              - gpg
+              - python3-docker
+              - docker-compose
+            state: present
+
+        - name: Add Docker repository signing key
+          ansible.builtin.apt_key:
+            url: https://download.docker.com/linux/debian/gpg
+            state: present
+
+        - name: Add repository
+          ansible.builtin.apt_repository:
+            repo: "deb [arch=amd64] https://download.docker.com/linux/debian {{ ansible_distribution_release }} stable"
+            state: present
+            update_cache: true
+
+        - name: Install Docker Community Edition
+          ansible.builtin.package:
+            name: docker-ce
+            state: present
+
+    - name: Setup Juntagrico docker-compose
+      community.general.docker_compose:
+        project_name: Juntagrico
+        definition: "{{ lookup('template','templates/docker-compose.yml') | from_yaml }}"
+        pull: true
+        recreate: smart
+        remove_images: all
+        remove_orphans: true
+        remove_volumes: true
+        state: present
