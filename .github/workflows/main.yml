@@ -18,6 +18,9 @@ jobs:
         with:
           entrypoint: ansible-lint
           args: .
+        env:
+          ANSIBLE_FORCE_COLOR: '1'
+          PY_COLORS: '1'
 
   Run:
     runs-on: ubuntu-20.04
@@ -32,4 +35,6 @@ jobs:
           entrypoint: ansible-playbook
           args: playbook.yml
         env:
+          ANSIBLE_FORCE_COLOR: '1'
+          PY_COLORS: '1'
           VAULT_PASS: ${{ secrets.VAULT_PASS }}
