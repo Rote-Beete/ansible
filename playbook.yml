@@ -21,6 +21,7 @@
             path: "{{ user_home.stdout }}/.ssh"
             state: directory
             mode: 0700
+          changed_when: false
 
         - name: Import public SSH hostkeys
           ansible.builtin.known_hosts:
@@ -28,18 +29,21 @@
             name: "{{ hostvars[item]['inventory_hostname'] }}"
             key: "{{ hostvars[item]['ansible_ssh_hostkey_pub'] }}"
           with_items:  "{{ groups['all'] }}"
+          changed_when: false
 
         - name: Import private SSH key
           ansible.builtin.copy:
             dest: "{{ user_home.stdout }}/.ssh/id_ed25519_cicd_rotebeete_org"
             content: "{{ ansible_ssh_key }}"
             mode: 0600
+          changed_when: false
 
         - name: Import public SSH key
           ansible.builtin.copy:
             dest: "{{ user_home.stdout }}/.ssh/id_ed25519_cicd_rotebeete_org.pub"
             content: "{{ ansible_ssh_key_pub }}"
             mode: 0600
+          changed_when: false
 
 - name: Deploy
   hosts: webservers
