@@ -12,8 +12,9 @@ volumes:
   static_volume:
 
 services:
-  db:
+  postgres:
     image: postgres:13-alpine
+    container_name: postgres
     environment:
       - POSTGRES_DB=juntagrico
       - POSTGRES_USER=juntagrico
@@ -23,8 +24,9 @@ services:
     networks:
       internal-network:
 
-  proxy:
+  traefik:
     image: traefik:v2.4
+    container_name: traefik
     command:
       - --api=true
       - --api.dashboard=true
@@ -62,11 +64,12 @@ services:
       external-network:
       internal-network:
     depends_on:
-      - app
-      - web
+      - juntagrico
+      - nginx
 
-  web:
+  nginx:
     image: nginx:1.19-alpine
+    container_name: nginx
     environment:
       NGINX_CONFIG: |
         server {
@@ -104,17 +107,18 @@ services:
     expose:
       - 8001
     depends_on:
-      - app
+      - juntagrico
 
-  app:
+  juntagrico:
     image: rotebeete/juntagrico
+    container_name: juntagrico
     environment:
       DEBUG: 0
       JUNTAGRICO_DATABASE_BACKEND: django.db.backends.postgresql
       JUNTAGRICO_DATABASE_NAME: juntagrico
       JUNTAGRICO_DATABASE_USER: juntagrico
       JUNTAGRICO_DATABASE_PASS: "{{ juntagrico_postgres_pass }}"
-      JUNTAGRICO_DATABASE_HOST: db
+      JUNTAGRICO_DATABASE_HOST: postgres
       JUNTAGRICO_EMAIL_HOST: "mail.rotebeete.org"
       JUNTAGRICO_EMAIL_USER: "no-reply@rotebeete.org"
       JUNTAGRICO_EMAIL_PASS: "{{ juntagrico_email_pass }}"
@@ -138,5 +142,7 @@ services:
       - static_volume:/home/app/web/static
     networks:
       internal-network:
+    expose:
+      - 8000
     depends_on:
-      - db
+      - postgres
