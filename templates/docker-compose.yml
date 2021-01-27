@@ -46,7 +46,6 @@ services:
       - /acme:/etc/traefik/acme
     labels:
       traefik.enable: true
-      traefik.docker.network: traefik_net
       traefik.http.middlewares.api-auth.basicauth.users: test:$$apr1$$H6uskkkW$$IgXLP6ewTrSuBkTrqE8wj/
       traefik.http.middlewares.api-redirectscheme.redirectscheme.scheme: https
       traefik.http.middlewares.api-redirectscheme.redirectscheme.permanent: true
